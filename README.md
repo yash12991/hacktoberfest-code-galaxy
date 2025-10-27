@@ -11,7 +11,7 @@ It visualizes a glowing galaxy of animated orbs, celebrating the spirit of colla
 ---
 
 ## 🚀 Live Demo
-Coming soon: [GitHub Pages Link](https://couragecodejourney.github.io/hacktoberfest-code-galaxy)
+[GitHub Pages Link][(https://couragecodejourney.github.io/hacktoberfest-code-galaxy)](https://couragecodejourney.github.io/hacktoberfest-code-galaxy/)
 
 ---
 
