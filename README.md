@@ -94,7 +94,8 @@ Make your contribution between **October 1–31** and join thousands of develope
 
 ## 📸 Preview (Coming Soon)
 
-A preview image of the galaxy animation will be added here once hosted via GitHub Pages.
+![Project Preview](assets/hacktoberfest.jpg)
+
 
 ---
 
