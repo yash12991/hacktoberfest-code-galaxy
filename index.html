@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +44,7 @@
             height: 80px;
             background: radial-gradient(circle, #ff7b00, #ff5500, #ff3300);
             border-radius: 50%;
-            box-shadow: 
+            box-shadow:
                 0 0 60px #ff7b00,
                 0 0 120px rgba(255, 123, 0, 0.5);
             animation: pulse 4s ease-in-out infinite;
@@ -67,9 +68,23 @@
             border-radius: 50%;
         }
 
-        .orbit-1 { width: 200px; height: 200px; animation: rotate 20s linear infinite; }
-        .orbit-2 { width: 300px; height: 300px; animation: rotate 30s linear infinite reverse; }
-        .orbit-3 { width: 400px; height: 400px; animation: rotate 40s linear infinite; }
+        .orbit-1 {
+            width: 200px;
+            height: 200px;
+            animation: rotate 20s linear infinite;
+        }
+
+        .orbit-2 {
+            width: 300px;
+            height: 300px;
+            animation: rotate 30s linear infinite reverse;
+        }
+
+        .orbit-3 {
+            width: 400px;
+            height: 400px;
+            animation: rotate 40s linear infinite;
+        }
 
         .pr {
             position: absolute;
@@ -149,7 +164,7 @@
             position: absolute;
             background: linear-gradient(135deg, #8b8b8b, #5a5a5a, #3a3a3a);
             border-radius: 50% 45% 55% 50%;
-            box-shadow: 
+            box-shadow:
                 inset -5px -5px 10px rgba(0, 0, 0, 0.5),
                 0 0 10px rgba(139, 139, 139, 0.3);
             animation: float-asteroid 30s linear infinite;
@@ -311,99 +326,146 @@
 
         /* Animations */
         @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
         }
 
         @keyframes rotate {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
 
         @keyframes twinkle {
-            0% { opacity: 0.3; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes twinkle-fast {
-            0% { opacity: 0.2; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes twinkle-slow {
-            0% { opacity: 0.4; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         @keyframes color-shift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+            0% {
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                filter: hue-rotate(360deg);
+            }
         }
 
         @keyframes float-asteroid {
-            0% { 
+            0% {
                 transform: translate(0, 0) rotate(0deg);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.8;
             }
+
             90% {
                 opacity: 0.8;
             }
-            100% { 
+
+            100% {
                 transform: translate(900px, 550px) rotate(360deg);
                 opacity: 0;
             }
         }
 
         @keyframes drift {
-            0%, 100% { 
+
+            0%,
+            100% {
                 transform: translate(0, 0) scale(1);
             }
+
             25% {
                 transform: translate(50px, 100px) scale(1.1);
             }
+
             50% {
                 transform: translate(100px, 50px) scale(0.9);
             }
+
             75% {
                 transform: translate(50px, -50px) scale(1.05);
             }
         }
 
         @keyframes drift-slow {
-            0% { 
+            0% {
                 transform: translate(0, 0);
                 opacity: 0;
             }
+
             10% {
                 opacity: 0.6;
             }
+
             90% {
                 opacity: 0.6;
             }
-            100% { 
+
+            100% {
                 transform: translate(100px, 100px);
                 opacity: 0;
             }
         }
 
         @keyframes comet-flight {
-            0% { 
+            0% {
                 transform: translateX(-200px) translateY(-100px) rotate(45deg);
                 opacity: 0;
             }
-            5% { 
+
+            5% {
                 opacity: 1;
             }
-            90% { 
+
+            90% {
                 opacity: 1;
             }
+
             95% {
                 opacity: 0;
             }
-            100% { 
+
+            100% {
                 transform: translateX(1000px) translateY(500px) rotate(45deg);
                 opacity: 0;
             }
@@ -414,79 +476,145 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 480px; /* orbit radius container */
+            width: 480px;
+            /* orbit radius container */
             height: 480px;
             /* start the whole orbit rotated a bit so the astronaut begins elsewhere */
             transform: translate(-50%, -50%) rotate(30deg);
             pointer-events: none;
             z-index: 12;
-            animation: astro-orbit 140s linear infinite; /* very slow orbit */
+            animation: astro-orbit 140s linear infinite;
+            /* very slow orbit */
         }
 
         .astronaut {
             position: absolute;
-            top: 100%; /* start from the bottom of the orbit container */
+            top: 100%;
+            /* start from the bottom of the orbit container */
             left: 50%;
             transform: translate(-50%, -50%);
-            animation: astro-bob 6s ease-in-out infinite; /* gentle bob */
+            animation: astro-bob 6s ease-in-out infinite;
+            /* gentle bob */
         }
 
         .astronaut img {
-            width: 40px; /* small astronaut */
+            width: 40px;
+            /* small astronaut */
             height: auto;
             display: block;
             transform-origin: 50% 50%;
             will-change: transform;
-            animation: astro-spin 8s linear infinite; /* rotate around own axis */
-            filter: drop-shadow(0 6px 6px rgba(0,0,0,0.35));
+            animation: astro-spin 8s linear infinite;
+            /* rotate around own axis */
+            filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.35));
         }
 
         @keyframes astro-orbit {
+
             /* keep the same rotation offset during the full revolution */
-            0% { transform: translate(-50%, -50%) rotate(30deg); }
-            100% { transform: translate(-50%, -50%) rotate(390deg); }
+            0% {
+                transform: translate(-50%, -50%) rotate(30deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(390deg);
+            }
         }
 
         @keyframes astro-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes astro-bob {
-            0% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-8px); }
-            100% { transform: translate(-50%, -50%) translateY(0); }
+            0% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) translateY(-8px);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) translateY(0);
+            }
         }
 
         @keyframes glow-pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 text-shadow: 0 0 10px #ff7b00, 0 0 20px rgba(255, 123, 0, 0.5);
             }
+
             50% {
                 text-shadow: 0 0 20px #ff7b00, 0 0 40px rgba(255, 123, 0, 0.8);
             }
         }
 
         /* Mobile Responsiveness */
+
+        /* Meteor Shower Animation */
+        .meteor {
+            position: absolute;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0));
+            border-radius: 2px;
+            opacity: 0.7;
+            pointer-events: none;
+            transform: rotate(45deg);
+            animation: meteor-fall 2s linear forwards;
+            z-index: 20;
+        }
+
+        @keyframes meteor-fall {
+            0% {
+                transform: translate(0, 0) rotate(45deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(800px, 400px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 height: 500px;
             }
-            
+
             .title {
                 font-size: 28px;
             }
-            
-            .orbit-1 { width: 200px; height: 200px; }
-            .orbit-2 { width: 300px; height: 300px; }
-            .orbit-3 { width: 400px; height: 400px; }
-            
+
+            .orbit-1 {
+                width: 200px;
+                height: 200px;
+            }
+
+            .orbit-2 {
+                width: 300px;
+                height: 300px;
+            }
+
+            .orbit-3 {
+                width: 400px;
+                height: 400px;
+            }
+
             .pr {
                 width: 30px;
                 height: 30px;
                 font-size: 8px;
             }
-            
+
             .contributors {
                 gap: 10px;
             }
@@ -495,19 +623,20 @@
             .astronaut-orbit {
                 width: 320px;
                 height: 320px;
-                animation-duration: 160s; /* keep it slow */
+                animation-duration: 160s;
+                /* keep it slow */
             }
 
             .astronaut img {
                 width: 32px;
             }
-            
+
             .contributor {
                 width: 40px;
                 height: 40px;
                 font-size: 10px;
             }
-            
+
             .stats {
                 top: 20px;
                 right: 20px;
@@ -520,36 +649,47 @@
             .container {
                 height: 450px;
             }
-            
+
             .title {
                 font-size: 22px;
             }
-            
+
             .subtitle {
                 font-size: 14px;
             }
-            
-            .orbit-1 { width: 150px; height: 150px; }
-            .orbit-2 { width: 220px; height: 220px; }
-            .orbit-3 { width: 300px; height: 300px; }
-            
+
+            .orbit-1 {
+                width: 150px;
+                height: 150px;
+            }
+
+            .orbit-2 {
+                width: 220px;
+                height: 220px;
+            }
+
+            .orbit-3 {
+                width: 300px;
+                height: 300px;
+            }
+
             .pr {
                 width: 25px;
                 height: 25px;
                 font-size: 7px;
             }
-            
+
             .contributors {
                 gap: 8px;
                 bottom: 20px;
             }
-            
+
             .contributor {
                 width: 35px;
                 height: 35px;
                 font-size: 9px;
             }
-            
+
             .stats {
                 position: relative;
                 top: auto;
@@ -565,6 +705,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="title">
@@ -638,17 +779,17 @@
         for (let i = 0; i < 200; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
-            
+
             // Randomize star sizes
             const sizeClasses = ['small', 'medium', 'large'];
             const randomSize = sizeClasses[Math.floor(Math.random() * sizeClasses.length)];
             star.classList.add(randomSize);
-            
+
             // Add colored stars occasionally
             if (Math.random() > 0.85) {
                 star.classList.add('colored');
             }
-            
+
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
             star.style.animationDelay = `${Math.random() * 3}s`;
@@ -659,18 +800,18 @@
         function createAsteroid() {
             const asteroid = document.createElement('div');
             asteroid.classList.add('asteroid');
-            
+
             const sizeClasses = ['small', 'medium', 'large'];
             const randomSize = sizeClasses[Math.floor(Math.random() * sizeClasses.length)];
             asteroid.classList.add(randomSize);
-            
+
             asteroid.style.left = `${-50 + Math.random() * 100}px`;
             asteroid.style.top = `${Math.random() * 100}%`;
             asteroid.style.animationDuration = `${20 + Math.random() * 20}s`;
             asteroid.style.animationDelay = `${Math.random() * 5}s`;
-            
+
             container.appendChild(asteroid);
-            
+
             // Remove asteroid after animation completes
             setTimeout(() => {
                 asteroid.remove();
@@ -696,35 +837,35 @@
 
         // Generate PRs on orbits
         const orbits = [
-            document.querySelector('.orbit-1'), 
-            document.querySelector('.orbit-2'), 
+            document.querySelector('.orbit-1'),
+            document.querySelector('.orbit-2'),
             document.querySelector('.orbit-3')
         ];
-        
+
         orbits.forEach((orbit, orbitIndex) => {
             const prCount = 6 + orbitIndex * 3;
-            
+
             for (let i = 0; i < prCount; i++) {
                 const pr = document.createElement('div');
                 pr.classList.add('pr');
-                
+
                 const status = Math.random() > 0.5 ? 'merged' : 'open';
                 pr.classList.add(status);
-                
+
                 const angle = (i / prCount) * 360;
                 const radius = orbit.offsetWidth / 2;
                 const x = radius * Math.cos(angle * Math.PI / 180);
                 const y = radius * Math.sin(angle * Math.PI / 180);
-                
+
                 pr.style.left = `calc(50% + ${x}px)`;
                 pr.style.top = `calc(50% + ${y}px)`;
                 pr.style.transform = `translate(-50%, -50%)`;
-                pr.textContent = `PR${orbitIndex+1}-${i+1}`;
-                
-                pr.addEventListener('mouseover', function() {
+                pr.textContent = `PR${orbitIndex + 1}-${i + 1}`;
+
+                pr.addEventListener('mouseover', function () {
                     this.setAttribute('title', `${status.toUpperCase()} - ${this.textContent}`);
                 });
-                
+
                 orbit.appendChild(pr);
             }
         });
@@ -732,7 +873,7 @@
         // Generate contributor avatars
         const contributorsContainer = document.querySelector('.contributors');
         const contributorNames = ['ALEX', 'SAM', 'JAMIE', 'TAY', 'RILEY', 'CASEY', 'JORDAN', 'SKY'];
-        
+
         contributorNames.forEach(name => {
             const contributor = document.createElement('div');
             contributor.classList.add('contributor');
@@ -763,6 +904,28 @@
             animateCounter(statValues[2], 7, 2000);
             animateCounter(statValues[3], 35, 2000);
         }, 1000);
+
+
+        // Meteor Shower Animation
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+
+            // random start position (top or left edge)
+            meteor.style.top = `${Math.random() * 50}%`;
+            meteor.style.left = `${Math.random() * 50}%`;
+            meteor.style.animationDuration = `${1.5 + Math.random()}s`;
+
+            document.querySelector('.container').appendChild(meteor);
+
+            // remove after animation
+            setTimeout(() => meteor.remove(), 2000);
+        }
+
+        // Generate meteors periodically
+        setInterval(createMeteor, 1200);
+
     </script>
 </body>
+
 </html>
