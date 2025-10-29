@@ -442,9 +442,24 @@
             font-size: 32px;
         }
 
+        .astronaut img {
+            width: 40px;
+            height: auto;
+            display: block;
+            transform-origin: 50% 50%;
+            will-change: transform;
+            animation: astro-spin 8s linear infinite;
+            filter: drop-shadow(0 6px 6px rgba(0,0,0,0.35));
+        }
+
         @keyframes astro-orbit {
             0% { transform: translate(-50%, -50%) rotate(30deg); }
             100% { transform: translate(-50%, -50%) rotate(390deg); }
+        }
+
+        @keyframes astro-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @keyframes astro-bob {
@@ -557,6 +572,11 @@
             .astronaut-orbit {
                 width: 320px;
                 height: 320px;
+                animation-duration: 160s;
+            }
+
+            .astronaut img {
+                width: 32px;
             }
             
             .stats {
@@ -614,7 +634,9 @@
 
         <!-- Astronaut -->
         <div class="astronaut-orbit" aria-hidden="true">
-            <div class="astronaut">🧑‍🚀</div>
+            <div class="astronaut">
+                <img src="assets/astronaut.png" alt="Astronaut floating in space">
+            </div>
         </div>
 
         <!-- Stars Background -->
