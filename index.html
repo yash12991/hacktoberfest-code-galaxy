@@ -55,6 +55,7 @@
             font-size: 14px;
             text-align: center;
             z-index: 10;
+            cursor: pointer;
         }
 
         /* Orbiting PRs */
@@ -260,6 +261,7 @@
             justify-content: center;
             gap: 15px;
             z-index: 15;
+            flex-wrap: wrap;
         }
 
         .contributor {
@@ -309,6 +311,148 @@
             font-weight: bold;
         }
 
+        /* NEW FEATURE: Interactive Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(13, 27, 42, 0.95);
+            border: 2px solid #ff7b00;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 13px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 123, 0, 0.5);
+            max-width: 200px;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* NEW FEATURE: Satellite Orbiters */
+        .satellite {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+            animation: satellite-blink 2s infinite;
+        }
+
+        @keyframes satellite-blink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(0, 212, 255, 0.8); }
+            50% { opacity: 0.5; box-shadow: 0 0 20px rgba(0, 212, 255, 1); }
+        }
+
+        /* NEW FEATURE: Warp Speed Effect (activated on click) */
+        .warp-line {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            opacity: 0;
+            animation: warp-speed 0.6s ease-out;
+        }
+
+        @keyframes warp-speed {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scaleY(0.5);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(600px) scaleY(2);
+            }
+        }
+
+        /* NEW FEATURE: Pulsing Rings on Center Click */
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid #ff7b00;
+            border-radius: 50%;
+            opacity: 1;
+            animation: ring-expand 1.5s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ring-expand {
+            0% {
+                width: 80px;
+                height: 80px;
+                opacity: 1;
+            }
+            100% {
+                width: 400px;
+                height: 400px;
+                opacity: 0;
+            }
+        }
+
+        /* NEW FEATURE: Code Rain Effect */
+        .code-rain {
+            position: absolute;
+            color: #00ff88;
+            font-size: 14px;
+            opacity: 0;
+            animation: code-fall 3s linear;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        @keyframes code-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(550px);
+            }
+        }
+
+        /* Astronaut - slow orbit, small size, gentle bob and spin */
+        .astronaut-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 480px;
+            height: 480px;
+            transform: translate(-50%, -50%) rotate(30deg);
+            pointer-events: none;
+            z-index: 12;
+            animation: astro-orbit 140s linear infinite;
+        }
+
+        .astronaut {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: astro-bob 6s ease-in-out infinite;
+            font-size: 32px;
+        }
+
+        @keyframes astro-orbit {
+            0% { transform: translate(-50%, -50%) rotate(30deg); }
+            100% { transform: translate(-50%, -50%) rotate(390deg); }
+        }
+
+        @keyframes astro-bob {
+            0% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-8px); }
+            100% { transform: translate(-50%, -50%) translateY(0); }
+        }
+
         /* Animations */
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
@@ -345,12 +489,8 @@
                 transform: translate(0, 0) rotate(0deg);
                 opacity: 0;
             }
-            10% {
-                opacity: 0.8;
-            }
-            90% {
-                opacity: 0.8;
-            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
             100% { 
                 transform: translate(900px, 550px) rotate(360deg);
                 opacity: 0;
@@ -358,18 +498,10 @@
         }
 
         @keyframes drift {
-            0%, 100% { 
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(50px, 100px) scale(1.1);
-            }
-            50% {
-                transform: translate(100px, 50px) scale(0.9);
-            }
-            75% {
-                transform: translate(50px, -50px) scale(1.05);
-            }
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, 100px) scale(1.1); }
+            50% { transform: translate(100px, 50px) scale(0.9); }
+            75% { transform: translate(50px, -50px) scale(1.05); }
         }
 
         @keyframes drift-slow {
@@ -377,12 +509,8 @@
                 transform: translate(0, 0);
                 opacity: 0;
             }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
             100% { 
                 transform: translate(100px, 100px);
                 opacity: 0;
@@ -394,68 +522,13 @@
                 transform: translateX(-200px) translateY(-100px) rotate(45deg);
                 opacity: 0;
             }
-            5% { 
-                opacity: 1;
-            }
-            90% { 
-                opacity: 1;
-            }
-            95% {
-                opacity: 0;
-            }
+            5% { opacity: 1; }
+            90% { opacity: 1; }
+            95% { opacity: 0; }
             100% { 
                 transform: translateX(1000px) translateY(500px) rotate(45deg);
                 opacity: 0;
             }
-        }
-
-        /* Astronaut - slow orbit, small size, gentle bob and spin */
-        .astronaut-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 480px; /* orbit radius container */
-            height: 480px;
-            /* start the whole orbit rotated a bit so the astronaut begins elsewhere */
-            transform: translate(-50%, -50%) rotate(30deg);
-            pointer-events: none;
-            z-index: 12;
-            animation: astro-orbit 140s linear infinite; /* very slow orbit */
-        }
-
-        .astronaut {
-            position: absolute;
-            top: 100%; /* start from the bottom of the orbit container */
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: astro-bob 6s ease-in-out infinite; /* gentle bob */
-        }
-
-        .astronaut img {
-            width: 40px; /* small astronaut */
-            height: auto;
-            display: block;
-            transform-origin: 50% 50%;
-            will-change: transform;
-            animation: astro-spin 8s linear infinite; /* rotate around own axis */
-            filter: drop-shadow(0 6px 6px rgba(0,0,0,0.35));
-        }
-
-        @keyframes astro-orbit {
-            /* keep the same rotation offset during the full revolution */
-            0% { transform: translate(-50%, -50%) rotate(30deg); }
-            100% { transform: translate(-50%, -50%) rotate(390deg); }
-        }
-
-        @keyframes astro-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes astro-bob {
-            0% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-8px); }
-            100% { transform: translate(-50%, -50%) translateY(0); }
         }
 
         @keyframes glow-pulse {
@@ -481,31 +554,9 @@
             .orbit-2 { width: 300px; height: 300px; }
             .orbit-3 { width: 400px; height: 400px; }
             
-            .pr {
-                width: 30px;
-                height: 30px;
-                font-size: 8px;
-            }
-            
-            .contributors {
-                gap: 10px;
-            }
-
-            /* Scale down astronaut orbit and image on medium screens */
             .astronaut-orbit {
                 width: 320px;
                 height: 320px;
-                animation-duration: 160s; /* keep it slow */
-            }
-
-            .astronaut img {
-                width: 32px;
-            }
-            
-            .contributor {
-                width: 40px;
-                height: 40px;
-                font-size: 10px;
             }
             
             .stats {
@@ -533,32 +584,6 @@
             .orbit-2 { width: 220px; height: 220px; }
             .orbit-3 { width: 300px; height: 300px; }
             
-            .pr {
-                width: 25px;
-                height: 25px;
-                font-size: 7px;
-            }
-            
-            .contributors {
-                gap: 8px;
-                bottom: 20px;
-            }
-            
-            .contributor {
-                width: 35px;
-                height: 35px;
-                font-size: 9px;
-            }
-            
-            .stats {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 20px auto;
-                width: 80%;
-            }
-
-            /* Hide astronaut on very small screens to prevent overlap */
             .astronaut-orbit {
                 display: none;
             }
@@ -578,7 +603,7 @@
         <div class="nebula orange" style="bottom: 20%; left: 40%;"></div>
 
         <!-- Galactic Center - Main Repository -->
-        <div class="galactic-center">
+        <div class="galactic-center" id="mainRepo">
             MAIN<br>REPO
         </div>
 
@@ -587,11 +612,9 @@
         <div class="orbit orbit-2"></div>
         <div class="orbit orbit-3"></div>
 
-        <!-- Astronaut: small, slow orbit, gentle bob and spin -->
+        <!-- Astronaut -->
         <div class="astronaut-orbit" aria-hidden="true">
-            <div class="astronaut">
-                <img src="assets/astronaut.png" alt="Astronaut floating in space">
-            </div>
+            <div class="astronaut">🧑‍🚀</div>
         </div>
 
         <!-- Stars Background -->
@@ -609,42 +632,44 @@
         <div class="stats">
             <div class="stat">
                 <span>Pull Requests:</span>
-                <span class="stat-value">42</span>
+                <span class="stat-value" id="statPR">0</span>
             </div>
             <div class="stat">
                 <span>Contributors:</span>
-                <span class="stat-value">18</span>
+                <span class="stat-value" id="statContrib">0</span>
             </div>
             <div class="stat">
                 <span>Repositories:</span>
-                <span class="stat-value">7</span>
+                <span class="stat-value" id="statRepos">0</span>
             </div>
             <div class="stat">
                 <span>Merged PRs:</span>
-                <span class="stat-value">35</span>
+                <span class="stat-value" id="statMerged">0</span>
             </div>
         </div>
 
         <!-- Contributors -->
         <div class="contributors"></div>
+
+        <!-- NEW: Tooltip for hover interactions -->
+        <div class="tooltip" id="tooltip"></div>
     </div>
 
     <script>
         const container = document.querySelector('.container');
         const starsContainer = document.querySelector('.stars');
         const stardustContainer = document.querySelector('.stardust');
+        const tooltip = document.getElementById('tooltip');
 
         // Generate enhanced stars with different sizes and colors
         for (let i = 0; i < 200; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
             
-            // Randomize star sizes
             const sizeClasses = ['small', 'medium', 'large'];
             const randomSize = sizeClasses[Math.floor(Math.random() * sizeClasses.length)];
             star.classList.add(randomSize);
             
-            // Add colored stars occasionally
             if (Math.random() > 0.85) {
                 star.classList.add('colored');
             }
@@ -671,14 +696,12 @@
             
             container.appendChild(asteroid);
             
-            // Remove asteroid after animation completes
             setTimeout(() => {
                 asteroid.remove();
-                createAsteroid(); // Create a new one
+                createAsteroid();
             }, (20 + Math.random() * 20) * 1000);
         }
 
-        // Create initial asteroids
         for (let i = 0; i < 5; i++) {
             setTimeout(() => createAsteroid(), i * 2000);
         }
@@ -721,13 +744,47 @@
                 pr.style.transform = `translate(-50%, -50%)`;
                 pr.textContent = `PR${orbitIndex+1}-${i+1}`;
                 
-                pr.addEventListener('mouseover', function() {
-                    this.setAttribute('title', `${status.toUpperCase()} - ${this.textContent}`);
+                // NEW: Enhanced tooltip on hover
+                pr.addEventListener('mouseenter', function(e) {
+                    tooltip.textContent = `${status.toUpperCase()} - ${this.textContent}\nOrbit ${orbitIndex + 1}`;
+                    tooltip.style.left = `${e.pageX + 15}px`;
+                    tooltip.style.top = `${e.pageY - 30}px`;
+                    tooltip.classList.add('show');
+                });
+                
+                pr.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('show');
                 });
                 
                 orbit.appendChild(pr);
             }
         });
+
+        // NEW: Add satellites orbiting around the center
+        function createSatellite(orbitRadius, speed) {
+            const satellite = document.createElement('div');
+            satellite.classList.add('satellite');
+            
+            let angle = Math.random() * 360;
+            
+            function updatePosition() {
+                angle += speed;
+                const x = orbitRadius * Math.cos(angle * Math.PI / 180);
+                const y = orbitRadius * Math.sin(angle * Math.PI / 180);
+                satellite.style.left = `calc(50% + ${x}px)`;
+                satellite.style.top = `calc(50% + ${y}px)`;
+                satellite.style.transform = 'translate(-50%, -50%)';
+                requestAnimationFrame(updatePosition);
+            }
+            
+            container.appendChild(satellite);
+            updatePosition();
+        }
+
+        // Create 3 satellites with different orbits
+        createSatellite(120, 0.3);
+        createSatellite(180, -0.2);
+        createSatellite(240, 0.25);
 
         // Generate contributor avatars
         const contributorsContainer = document.querySelector('.contributors');
@@ -737,8 +794,34 @@
             const contributor = document.createElement('div');
             contributor.classList.add('contributor');
             contributor.textContent = name;
+            
+            // NEW: Click to create code rain effect
+            contributor.addEventListener('click', function() {
+                createCodeRain(this);
+            });
+            
             contributorsContainer.appendChild(contributor);
         });
+
+        // NEW: Code rain effect when clicking contributors
+        function createCodeRain(element) {
+            const rect = element.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const codeSymbols = ['{}', '[]', '()', '<>', '//','/*', '*/','git','pr','fix'];
+            
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const codeRain = document.createElement('div');
+                    codeRain.classList.add('code-rain');
+                    codeRain.textContent = codeSymbols[Math.floor(Math.random() * codeSymbols.length)];
+                    codeRain.style.left = `${rect.left - containerRect.left + Math.random() * 50}px`;
+                    codeRain.style.top = `${rect.top - containerRect.top}px`;
+                    container.appendChild(codeRain);
+                    
+                    setTimeout(() => codeRain.remove(), 3000);
+                }, i * 100);
+            }
+        }
 
         // Animate stats counter
         function animateCounter(element, target, duration) {
@@ -755,14 +838,75 @@
             }, 16);
         }
 
-        // Animate stats after a delay
         setTimeout(() => {
-            const statValues = document.querySelectorAll('.stat-value');
-            animateCounter(statValues[0], 42, 2000);
-            animateCounter(statValues[1], 18, 2000);
-            animateCounter(statValues[2], 7, 2000);
-            animateCounter(statValues[3], 35, 2000);
+            animateCounter(document.getElementById('statPR'), 42, 2000);
+            animateCounter(document.getElementById('statContrib'), 18, 2000);
+            animateCounter(document.getElementById('statRepos'), 7, 2000);
+            animateCounter(document.getElementById('statMerged'), 35, 2000);
         }, 1000);
+
+        // NEW: Warp speed effect on center click
+        const mainRepo = document.getElementById('mainRepo');
+        mainRepo.addEventListener('click', function() {
+            // Create pulse rings
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const ring = document.createElement('div');
+                    ring.classList.add('pulse-ring');
+                    container.appendChild(ring);
+                    setTimeout(() => ring.remove(), 1500);
+                }, i * 200);
+            }
+            
+            // Create warp lines
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const warpLine = document.createElement('div');
+                    warpLine.classList.add('warp-line');
+                    warpLine.style.left = `${Math.random() * 100}%`;
+                    warpLine.style.top = '0';
+                    warpLine.style.transform = `rotate(${-10 + Math.random() * 20}deg)`;
+                    container.appendChild(warpLine);
+                    setTimeout(() => warpLine.remove(), 600);
+                }, i * 40);
+            }
+        });
+
+        // NEW: Double-click anywhere to create a mini galaxy burst
+        container.addEventListener('dblclick', function(e) {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '6px';
+                particle.style.height = '6px';
+                particle.style.borderRadius = '50%';
+                particle.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                particle.style.boxShadow = `0 0 10px currentColor`;
+                particle.style.pointerEvents = 'none';
+                
+                const angle = (i / 12) * Math.PI * 2;
+                const distance = 80 + Math.random() * 40;
+                const endX = x + Math.cos(angle) * distance;
+                const endY = y + Math.sin(angle) * distance;
+                
+                particle.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                    { transform: `translate(${endX - x}px, ${endY - y}px) scale(0)`, opacity: 0 }
+                ], {
+                    duration: 800 + Math.random() * 400,
+                    easing: 'ease-out'
+                });
+                
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }
+        });
     </script>
 </body>
 </html>
