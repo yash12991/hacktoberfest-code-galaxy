@@ -92,7 +92,7 @@ Make your contribution between **October 1–31** and join thousands of develope
 
 ---
 
-## 📸 Preview (Coming Soon)
+## 📸 Preview
 
 ![Project Preview](assets/hacktoberfest.jpg)
 
