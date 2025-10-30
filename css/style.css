@@ -810,7 +810,7 @@ body {
 
 /* ====== MOBILE RESPONSIVENESS ====== */
 
-@media (max-width: 768px) {
+@media (max-width: 920px) {
     .container {
         height: 500px;
     }
@@ -865,6 +865,7 @@ body {
         right: 20px;
         padding: 10px;
         font-size: 12px;
+        margin-top:50px;
     }
 }
 
@@ -917,8 +918,8 @@ body {
         position: relative;
         top: auto;
         right: auto;
-        margin: 20px auto;
         width: 80%;
+        margin:50px auto;
     }
 
     .astronaut-orbit {
