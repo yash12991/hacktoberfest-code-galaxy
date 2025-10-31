@@ -27,7 +27,7 @@ It visualizes a glowing galaxy of animated elements, celebrating the spirit of c
 
 ### Interactive Features
 
-  * 🎵 **Advanced Music System** - Dual-mode music with procedural generation or custom files, includes volume control and persistent settings. See [MUSIC_GUIDE.md](MUSIC_GUIDE.md) for details.
+  * 🎵 **Advanced Music System** - Dual-mode music with procedural generation or custom files, includes volume control and persistent settings. **NEW: Track Selector** - Switch between 5+ music tracks on-the-fly! See [MUSIC_GUIDE.md](MUSIC_GUIDE.md) and [MUSIC_TRACK_SELECTOR.md](MUSIC_TRACK_SELECTOR.md) for details.
   * 🎯 **Clickable PRs** - Hover over pull requests to see their status.
   * 📊 **Animated Stats Counter** - Live counting animation for repository statistics.
   * 💥 **Warp Speed Effect** - Click the main repository for a warp jump animation.

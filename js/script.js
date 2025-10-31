@@ -855,6 +855,207 @@ class SpaceMusicSystem {
 // Initialize music system
 const spaceMusicSystem = new SpaceMusicSystem();
 
+// ====== MUSIC TRACK SELECTOR ======
+class MusicTrackSelector {
+    constructor(musicSystem) {
+        this.musicSystem = musicSystem;
+        this.trackBtn = document.getElementById('musicTrackBtn');
+        this.trackDropdown = document.getElementById('musicTrackDropdown');
+        this.trackOptions = document.querySelectorAll('.track-option');
+        this.currentTrack = localStorage.getItem('currentMusicTrack') || 'space-music.mp3';
+        
+        this.availableTracks = [
+            { file: 'space-music.mp3', name: 'Track 1 - Space Ambient', icon: '🌌' },
+            { file: 'space-music2.mp3', name: 'Track 2 - Cosmic Journey', icon: '🌠' },
+            { file: 'space-music3.mp3', name: 'Track 3 - Deep Space', icon: '🚀' },
+            { file: 'space-music4.mp3', name: 'Track 4 - Stellar Winds', icon: '⭐' },
+            { file: 'space-music5.mp3', name: 'Track 5 - Nebula Dreams', icon: '🌟' },
+            { file: 'procedural', name: 'Procedural Music (Generated)', icon: '🎹' }
+        ];
+        
+        this.init();
+    }
+    
+    init() {
+        // Set initial active track
+        this.setActiveTrack(this.currentTrack);
+        
+        // Toggle dropdown
+        this.trackBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.trackDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.trackBtn.contains(e.target) && !this.trackDropdown.contains(e.target)) {
+                this.trackDropdown.classList.remove('show');
+            }
+        });
+        
+        // Track selection
+        this.trackOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const trackFile = option.getAttribute('data-track');
+                this.switchTrack(trackFile);
+            });
+        });
+        
+        // Apply saved track
+        if (this.currentTrack !== 'space-music.mp3') {
+            this.applyTrack(this.currentTrack, false);
+        }
+    }
+    
+    setActiveTrack(trackFile) {
+        this.trackOptions.forEach(option => {
+            if (option.getAttribute('data-track') === trackFile) {
+                option.classList.add('active');
+            } else {
+                option.classList.remove('active');
+            }
+        });
+    }
+    
+    switchTrack(trackFile) {
+        if (trackFile === this.currentTrack) {
+            this.trackDropdown.classList.remove('show');
+            return;
+        }
+        
+        // Show switching animation
+        const musicContainer = document.querySelector('.music-toggle-container');
+        musicContainer.classList.add('music-switching');
+        
+        // Stop current music
+        const wasPlaying = this.musicSystem.isPlaying;
+        if (wasPlaying) {
+            this.musicSystem.stopMusic();
+        }
+        
+        // Switch track
+        setTimeout(() => {
+            this.applyTrack(trackFile, wasPlaying);
+            musicContainer.classList.remove('music-switching');
+            this.trackDropdown.classList.remove('show');
+        }, 300);
+        
+        // Show notification
+        this.showTrackNotification(trackFile);
+    }
+    
+    applyTrack(trackFile, autoPlay = true) {
+        this.currentTrack = trackFile;
+        localStorage.setItem('currentMusicTrack', trackFile);
+        this.setActiveTrack(trackFile);
+        
+        if (trackFile === 'procedural') {
+            // Use procedural music
+            this.musicSystem.useWebAudio = true;
+            if (autoPlay) {
+                this.musicSystem.startProceduralMusic();
+                this.musicSystem.isPlaying = true;
+            }
+        } else {
+            // Use file-based music
+            this.musicSystem.useWebAudio = false;
+            this.musicSystem.audioElement.src = `assets/${trackFile}`;
+            
+            // Load and play if needed
+            if (autoPlay) {
+                this.musicSystem.audioElement.load();
+                this.musicSystem.audioElement.play().catch(e => {
+                    console.log('Auto-play prevented:', e);
+                });
+                this.musicSystem.isPlaying = true;
+            }
+        }
+        
+        // Update toggle state
+        const musicToggle = document.getElementById('musicToggle');
+        if (musicToggle) {
+            musicToggle.checked = this.musicSystem.isPlaying;
+        }
+    }
+    
+    showTrackNotification(trackFile) {
+        const track = this.availableTracks.find(t => t.file === trackFile);
+        if (!track) return;
+        
+        const notification = document.createElement('div');
+        notification.className = 'track-notification';
+        notification.innerHTML = `
+            <div class="track-notif-icon">${track.icon}</div>
+            <div class="track-notif-text">
+                <div class="track-notif-title">Now Playing</div>
+                <div class="track-notif-name">${track.name}</div>
+            </div>
+        `;
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(13, 27, 42, 0.95);
+            border: 2px solid var(--secondary-color);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-family: 'Courier New', monospace;
+            z-index: 10001;
+            box-shadow: 0 0 20px var(--secondary-glow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+        `;
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            .track-notif-icon {
+                font-size: 32px;
+                filter: drop-shadow(0 0 10px var(--secondary-glow));
+            }
+            .track-notif-title {
+                font-size: 11px;
+                color: var(--secondary-color);
+                text-transform: uppercase;
+                margin-bottom: 3px;
+            }
+            .track-notif-name {
+                font-size: 13px;
+                font-weight: bold;
+            }
+        `;
+        document.head.appendChild(style);
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            notification.style.transition = 'all 0.3s ease';
+            setTimeout(() => {
+                notification.remove();
+                style.remove();
+            }, 300);
+        }, 3000);
+    }
+}
+
+// Initialize track selector
+const musicTrackSelector = new MusicTrackSelector(spaceMusicSystem);
+
 // ====== MOUSE TRAIL SYSTEM ======
 let mouseX = 0, mouseY = 0, trailParticles = [], lastTrailTime = 0;
 const trailInterval = 50;
