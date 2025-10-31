@@ -35,6 +35,12 @@
                 <button class="theme-control-btn" id="customizeThemeBtn" title="Customize">
                     ✨
                 </button>
+                <button class="theme-control-btn" id="favoritesBtn" title="Favorites">
+                    ⭐
+                </button>
+                <button class="theme-control-btn" id="shareThemeBtn" title="Share/Import">
+                    📤
+                </button>
             </div>
             
             <!-- Theme Options -->
@@ -45,6 +51,7 @@
                     <span class="theme-preview-dot" style="color: #00ff88;"></span>
                     <span class="theme-preview-dot" style="color: #6a00ff;"></span>
                 </div>
+                <button class="favorite-star" data-theme="deep-space" title="Add to favorites">☆</button>
             </div>
             <div class="theme-option" data-theme="cosmic-purple">
                 <span>Cosmic Purple</span>
@@ -53,6 +60,7 @@
                     <span class="theme-preview-dot" style="color: #06ffa5;"></span>
                     <span class="theme-preview-dot" style="color: #ff6ec7;"></span>
                 </div>
+                <button class="favorite-star" data-theme="cosmic-purple" title="Add to favorites">☆</button>
             </div>
             <div class="theme-option" data-theme="emerald-dream">
                 <span>Emerald Dream</span>
@@ -61,6 +69,7 @@
                     <span class="theme-preview-dot" style="color: #00d4ff;"></span>
                     <span class="theme-preview-dot" style="color: #7fff00;"></span>
                 </div>
+                <button class="favorite-star" data-theme="emerald-dream" title="Add to favorites">☆</button>
             </div>
             <div class="theme-option" data-theme="neon-sunset">
                 <span>Neon Sunset</span>
@@ -69,6 +78,7 @@
                     <span class="theme-preview-dot" style="color: #ffd700;"></span>
                     <span class="theme-preview-dot" style="color: #00d4ff;"></span>
                 </div>
+                <button class="favorite-star" data-theme="neon-sunset" title="Add to favorites">☆</button>
             </div>
             <div class="theme-option" data-theme="arctic-aurora">
                 <span>Arctic Aurora</span>
@@ -77,6 +87,7 @@
                     <span class="theme-preview-dot" style="color: #b967ff;"></span>
                     <span class="theme-preview-dot" style="color: #00ff88;"></span>
                 </div>
+                <button class="favorite-star" data-theme="arctic-aurora" title="Add to favorites">☆</button>
             </div>
             <div class="theme-option" data-theme="solar-flare">
                 <span>Solar Flare</span>
@@ -85,6 +96,7 @@
                     <span class="theme-preview-dot" style="color: #ff2f00;"></span>
                     <span class="theme-preview-dot" style="color: #ffd700;"></span>
                 </div>
+                <button class="favorite-star" data-theme="solar-flare" title="Add to favorites">☆</button>
             </div>
             
             <!-- Keyboard Shortcuts Info -->
@@ -125,6 +137,63 @@
                 <div class="customizer-actions">
                     <button class="apply-custom-theme" id="applyCustomTheme">Apply Theme</button>
                     <button class="reset-custom-theme" id="resetCustomTheme">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Modal -->
+    <div class="theme-customizer-modal" id="favoritesModal">
+        <div class="customizer-content">
+            <div class="customizer-header">
+                <h3>⭐ Favorite Themes</h3>
+                <button class="close-customizer" id="closeFavorites">✕</button>
+            </div>
+            <div class="customizer-body">
+                <div id="favoritesList" class="favorites-list">
+                    <p class="no-favorites">No favorite themes yet. Click the ☆ icon on any theme to add it!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div class="theme-customizer-modal" id="shareModal">
+        <div class="customizer-content">
+            <div class="customizer-header">
+                <h3>📤 Share & Import Themes</h3>
+                <button class="close-customizer" id="closeShare">✕</button>
+            </div>
+            <div class="customizer-body">
+                <div class="share-section">
+                    <h4>Export Current Theme</h4>
+                    <p class="share-description">Share your current theme with others</p>
+                    <div class="share-actions">
+                        <button class="share-action-btn" id="exportThemeBtn">
+                            📋 Copy Theme Code
+                        </button>
+                        <button class="share-action-btn" id="downloadThemeBtn">
+                            💾 Download as File
+                        </button>
+                    </div>
+                    <textarea id="themeCodeOutput" class="theme-code-display" readonly placeholder="Theme code will appear here..."></textarea>
+                </div>
+                
+                <div class="share-divider"></div>
+                
+                <div class="share-section">
+                    <h4>Import Theme</h4>
+                    <p class="share-description">Paste a theme code or upload a theme file</p>
+                    <textarea id="themeCodeInput" class="theme-code-input" placeholder="Paste theme code here..."></textarea>
+                    <div class="share-actions">
+                        <button class="share-action-btn" id="importThemeBtn">
+                            📥 Import Theme
+                        </button>
+                        <label class="share-action-btn" for="themeFileInput">
+                            📁 Upload File
+                            <input type="file" id="themeFileInput" accept=".json" style="display: none;">
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

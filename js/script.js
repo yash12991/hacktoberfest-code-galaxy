@@ -35,6 +35,10 @@ class ThemeManager {
         this.setupCustomizer();
         this.setupKeyboardShortcuts();
         this.setupThemePreview();
+        
+        // Initialize new features
+        this.initializeFavorites();
+        this.initializeImportExport();
     }
     
     updateActiveOption() {
@@ -308,6 +312,267 @@ class ThemeManager {
             (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
             (B < 255 ? (B < 1 ? 0 : B) : 255)
         ).toString(16).slice(1);
+    }
+    
+    // ===== Favorites Management =====
+    initializeFavorites() {
+        this.favorites = JSON.parse(localStorage.getItem('favorite-themes') || '[]');
+        this.setupFavoritesListeners();
+        this.updateFavoriteStars();
+    }
+    
+    setupFavoritesListeners() {
+        // Favorites button in controls
+        const favoritesBtn = document.getElementById('favoritesBtn');
+        const favoritesModal = document.getElementById('favoritesModal');
+        const closeFavoritesBtn = document.getElementById('closeFavorites');
+        
+        favoritesBtn?.addEventListener('click', () => {
+            this.renderFavorites();
+            favoritesModal?.classList.add('active');
+            themeDropdown.classList.remove('show');
+        });
+        
+        closeFavoritesBtn?.addEventListener('click', () => {
+            favoritesModal?.classList.remove('active');
+        });
+        
+        // Star buttons on theme options
+        document.querySelectorAll('.favorite-star').forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const themeName = star.closest('.theme-option').getAttribute('data-theme');
+                this.toggleFavorite(themeName);
+            });
+        });
+    }
+    
+    toggleFavorite(themeName) {
+        const index = this.favorites.indexOf(themeName);
+        
+        if (index === -1) {
+            // Add to favorites
+            this.favorites.push(themeName);
+        } else {
+            // Remove from favorites
+            this.favorites.splice(index, 1);
+        }
+        
+        localStorage.setItem('favorite-themes', JSON.stringify(this.favorites));
+        this.updateFavoriteStars();
+        this.renderFavorites();
+    }
+    
+    updateFavoriteStars() {
+        document.querySelectorAll('.favorite-star').forEach(star => {
+            const themeName = star.closest('.theme-option').getAttribute('data-theme');
+            if (this.favorites.includes(themeName)) {
+                star.textContent = '★';
+                star.classList.add('favorited');
+            } else {
+                star.textContent = '☆';
+                star.classList.remove('favorited');
+            }
+        });
+    }
+    
+    renderFavorites() {
+        const favoritesList = document.getElementById('favoritesList');
+        
+        if (!favoritesList) return;
+        
+        if (this.favorites.length === 0) {
+            favoritesList.innerHTML = '<p>No favorite themes yet. Click ☆ on any theme to add it here!</p>';
+            return;
+        }
+        
+        favoritesList.innerHTML = this.favorites.map(themeName => {
+            const themeColors = this.getThemeColors(themeName);
+            return `
+                <div class="theme-option" data-theme="${themeName}">
+                    <span>${this.formatThemeName(themeName)}</span>
+                    <button class="favorite-star favorited" data-theme="${themeName}">★</button>
+                </div>
+            `;
+        }).join('');
+        
+        // Add click listeners to favorites list items
+        favoritesList.querySelectorAll('.theme-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('favorite-star')) {
+                    const themeName = option.getAttribute('data-theme');
+                    this.setTheme(themeName);
+                    document.getElementById('favoritesModal')?.classList.remove('active');
+                }
+            });
+        });
+        
+        // Add listeners to stars in favorites list
+        favoritesList.querySelectorAll('.favorite-star').forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const themeName = star.getAttribute('data-theme');
+                this.toggleFavorite(themeName);
+            });
+        });
+    }
+    
+    getThemeColors(themeName) {
+        // Return theme colors for preview (could be expanded)
+        return {
+            primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim()
+        };
+    }
+    
+    // ===== Import/Export Functionality =====
+    initializeImportExport() {
+        const shareBtn = document.getElementById('shareBtn');
+        const shareModal = document.getElementById('shareModal');
+        const closeShareBtn = document.getElementById('closeShare');
+        
+        shareBtn?.addEventListener('click', () => {
+            this.exportCurrentTheme();
+            shareModal?.classList.add('active');
+            themeDropdown.classList.remove('show');
+        });
+        
+        closeShareBtn?.addEventListener('click', () => {
+            shareModal?.classList.remove('active');
+        });
+        
+        // Export buttons
+        document.getElementById('copyThemeCode')?.addEventListener('click', () => this.copyThemeCode());
+        document.getElementById('downloadTheme')?.addEventListener('click', () => this.downloadTheme());
+        
+        // Import buttons
+        document.getElementById('pasteThemeCode')?.addEventListener('click', () => this.pasteThemeCode());
+        document.getElementById('uploadTheme')?.addEventListener('click', () => {
+            document.getElementById('themeFileUpload')?.click();
+        });
+        
+        document.getElementById('themeFileUpload')?.addEventListener('change', (e) => {
+            this.handleFileUpload(e);
+        });
+    }
+    
+    exportCurrentTheme() {
+        const currentThemeData = {
+            name: this.currentTheme,
+            timestamp: new Date().toISOString(),
+            colors: {
+                primary: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim(),
+                secondary: getComputedStyle(document.documentElement).getPropertyValue('--secondary-color').trim(),
+                accent: getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim(),
+                bg: getComputedStyle(document.documentElement).getPropertyValue('--bg-gradient-start').trim()
+            }
+        };
+        
+        const themeJSON = JSON.stringify(currentThemeData, null, 2);
+        document.getElementById('themeCodeDisplay').value = themeJSON;
+    }
+    
+    copyThemeCode() {
+        const themeCode = document.getElementById('themeCodeDisplay');
+        themeCode.select();
+        document.execCommand('copy');
+        
+        this.showImportMessage('Theme code copied to clipboard!', 'success');
+    }
+    
+    downloadTheme() {
+        const themeCode = document.getElementById('themeCodeDisplay').value;
+        const blob = new Blob([themeCode], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.currentTheme}-theme-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.showImportMessage('Theme downloaded successfully!', 'success');
+    }
+    
+    pasteThemeCode() {
+        const themeCode = document.getElementById('themeCodeInput').value.trim();
+        
+        if (!themeCode) {
+            this.showImportMessage('Please paste theme code first!', 'error');
+            return;
+        }
+        
+        try {
+            const themeData = JSON.parse(themeCode);
+            this.importTheme(themeData);
+        } catch (error) {
+            this.showImportMessage('Invalid theme code format!', 'error');
+        }
+    }
+    
+    handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const themeData = JSON.parse(e.target.result);
+                this.importTheme(themeData);
+            } catch (error) {
+                this.showImportMessage('Invalid theme file format!', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+    
+    importTheme(themeData) {
+        if (!themeData || !themeData.colors) {
+            this.showImportMessage('Invalid theme data!', 'error');
+            return;
+        }
+        
+        const { primary, secondary, accent, bg } = themeData.colors;
+        
+        // Apply the imported theme
+        const root = document.documentElement;
+        root.style.setProperty('--primary-color', primary);
+        root.style.setProperty('--primary-light', this.adjustBrightness(primary, 20));
+        root.style.setProperty('--primary-dark', this.adjustBrightness(primary, -20));
+        root.style.setProperty('--primary-glow', this.hexToRGBA(primary, 0.3));
+        
+        root.style.setProperty('--secondary-color', secondary);
+        root.style.setProperty('--secondary-dark', this.adjustBrightness(secondary, -20));
+        root.style.setProperty('--secondary-glow', this.hexToRGBA(secondary, 0.7));
+        
+        root.style.setProperty('--accent-color', accent);
+        root.style.setProperty('--accent-dark', this.adjustBrightness(accent, -20));
+        root.style.setProperty('--accent-glow', this.hexToRGBA(accent, 0.7));
+        
+        root.style.setProperty('--bg-gradient-start', bg);
+        root.style.setProperty('--bg-gradient-mid', this.adjustBrightness(bg, -10));
+        root.style.setProperty('--bg-gradient-end', this.adjustBrightness(bg, -20));
+        
+        this.showImportMessage(`Theme "${themeData.name}" imported successfully!`, 'success');
+        document.getElementById('shareModal')?.classList.remove('active');
+        createThemeChangeEffect();
+        
+        // Clear input
+        document.getElementById('themeCodeInput').value = '';
+    }
+    
+    showImportMessage(message, type) {
+        const existingMsg = document.querySelector('.import-message');
+        if (existingMsg) existingMsg.remove();
+        
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `import-message ${type}`;
+        msgDiv.textContent = message;
+        
+        const shareSection = document.querySelector('.share-section');
+        shareSection.appendChild(msgDiv);
+        
+        setTimeout(() => msgDiv.remove(), 3000);
     }
 }
 
