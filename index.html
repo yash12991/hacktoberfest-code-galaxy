@@ -18,6 +18,63 @@
         <span>Music</span>
     </div>
 
+    <!-- Theme Switcher -->
+    <div class="theme-switcher-container">
+        <button class="theme-button" id="themeButton">
+            <span>🎨 Theme</span>
+        </button>
+        <div class="theme-dropdown" id="themeDropdown">
+            <div class="theme-option active" data-theme="deep-space">
+                <span>Deep Space</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #ff7b00;"></span>
+                    <span class="theme-preview-dot" style="color: #00ff88;"></span>
+                    <span class="theme-preview-dot" style="color: #6a00ff;"></span>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="cosmic-purple">
+                <span>Cosmic Purple</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #b967ff;"></span>
+                    <span class="theme-preview-dot" style="color: #06ffa5;"></span>
+                    <span class="theme-preview-dot" style="color: #ff6ec7;"></span>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="emerald-dream">
+                <span>Emerald Dream</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #00ff88;"></span>
+                    <span class="theme-preview-dot" style="color: #00d4ff;"></span>
+                    <span class="theme-preview-dot" style="color: #7fff00;"></span>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="neon-sunset">
+                <span>Neon Sunset</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #ff2f9f;"></span>
+                    <span class="theme-preview-dot" style="color: #ffd700;"></span>
+                    <span class="theme-preview-dot" style="color: #00d4ff;"></span>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="arctic-aurora">
+                <span>Arctic Aurora</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #00d4ff;"></span>
+                    <span class="theme-preview-dot" style="color: #b967ff;"></span>
+                    <span class="theme-preview-dot" style="color: #00ff88;"></span>
+                </div>
+            </div>
+            <div class="theme-option" data-theme="solar-flare">
+                <span>Solar Flare</span>
+                <div class="theme-preview">
+                    <span class="theme-preview-dot" style="color: #ffaa00;"></span>
+                    <span class="theme-preview-dot" style="color: #ff2f00;"></span>
+                    <span class="theme-preview-dot" style="color: #ffd700;"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Background Music -->
     <audio id="bgMusic" loop>
         <source src="assets/bg_music.mp3" type="audio/mpeg">
@@ -90,6 +147,55 @@
 
         <!-- Tooltip for hover interactions -->
         <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <!-- Asteroid Dodging Game Overlay -->
+    <div class="game-overlay" id="gameOverlay">
+        <div class="game-container">
+            <div class="game-header">
+                <h2>🚀 Asteroid Dodger</h2>
+                <button class="close-game" id="closeGame">✕</button>
+            </div>
+            <div class="game-info">
+                <div class="game-stat">Score: <span id="gameScore">0</span></div>
+                <div class="game-stat">High Score: <span id="highScore">0</span></div>
+                <div class="game-stat">Lives: <span id="gameLives">3</span></div>
+            </div>
+            <canvas id="gameCanvas" width="600" height="400"></canvas>
+            <div class="game-controls">
+                <p>Use Arrow Keys or WASD to move</p>
+                <p>Press SPACE to pause/resume</p>
+            </div>
+            <div class="game-over-screen" id="gameOverScreen">
+                <h3>Game Over!</h3>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <button class="restart-game" id="restartGame">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Launch Button -->
+    <button class="game-launch-btn" id="gameLaunchBtn">🎮 Play Game</button>
+
+    <!-- Achievements Panel -->
+    <div class="achievements-panel" id="achievementsPanel">
+        <button class="achievements-toggle" id="achievementsToggle">
+            🏆 <span id="achievementCount">0</span>/<span id="totalAchievements">10</span>
+        </button>
+        <div class="achievements-dropdown" id="achievementsDropdown">
+            <h3>🏆 Achievements</h3>
+            <div class="achievements-list" id="achievementsList"></div>
+            <button class="reset-achievements" id="resetAchievements">Reset Progress</button>
+        </div>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div class="achievement-notification" id="achievementNotification">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-details">
+            <div class="achievement-title" id="notificationTitle">Achievement Unlocked!</div>
+            <div class="achievement-description" id="notificationDescription"></div>
+        </div>
     </div>
 
     <script src="js/script.js"></script>
