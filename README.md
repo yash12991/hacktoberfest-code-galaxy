@@ -27,7 +27,7 @@ It visualizes a glowing galaxy of animated elements, celebrating the spirit of c
 
 ### Interactive Features
 
-  * 🎵 **Galaxy Music Toggle** - Background space music that can be toggled on or off.
+  * 🎵 **Advanced Music System** - Dual-mode music with procedural generation or custom files, includes volume control and persistent settings. See [MUSIC_GUIDE.md](MUSIC_GUIDE.md) for details.
   * 🎯 **Clickable PRs** - Hover over pull requests to see their status.
   * 📊 **Animated Stats Counter** - Live counting animation for repository statistics.
   * 💥 **Warp Speed Effect** - Click the main repository for a warp jump animation.

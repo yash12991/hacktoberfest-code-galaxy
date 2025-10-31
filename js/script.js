@@ -616,27 +616,244 @@ function createThemeChangeEffect() {
     });
 }
 
-// ====== MUSIC TOGGLE ======
-if (musicToggle && bgMusic) {
-    // Load saved music preference
-    const savedMusicState = localStorage.getItem('galaxyMusicEnabled');
-    if (savedMusicState !== null) {
-        musicToggle.checked = savedMusicState === 'true';
-        if (musicToggle.checked) {
-            bgMusic.play().catch(e => console.log('Autoplay prevented:', e));
+// ====== ADVANCED MUSIC SYSTEM ======
+class SpaceMusicSystem {
+    constructor() {
+        this.audioElement = document.getElementById('bgMusic');
+        this.musicToggle = document.getElementById('musicToggle');
+        this.isPlaying = false;
+        this.useWebAudio = true; // Fallback to Web Audio if no file exists
+        
+        // Web Audio API for procedural music generation
+        this.audioContext = null;
+        this.oscillators = [];
+        this.gainNode = null;
+        
+        this.init();
+    }
+    
+    init() {
+        // Load saved preference
+        const savedMusicState = localStorage.getItem('galaxyMusicEnabled');
+        if (savedMusicState !== null) {
+            this.musicToggle.checked = savedMusicState === 'true';
+        }
+        
+        // Try to play regular audio first
+        this.audioElement.addEventListener('error', () => {
+            console.log('Audio file not found, using procedural music');
+            this.useWebAudio = true;
+            if (this.musicToggle.checked) {
+                this.startProceduralMusic();
+            }
+        });
+        
+        this.audioElement.addEventListener('canplay', () => {
+            console.log('Audio file loaded successfully');
+            this.useWebAudio = false;
+        });
+        
+        // Setup toggle listener
+        this.musicToggle.addEventListener('change', () => {
+            this.toggleMusic();
+        });
+        
+        // Auto-start if enabled
+        if (this.musicToggle.checked) {
+            this.startMusic();
+        }
+        
+        // Add volume control
+        this.addVolumeControl();
+    }
+    
+    toggleMusic() {
+        if (this.musicToggle.checked) {
+            this.startMusic();
+        } else {
+            this.stopMusic();
+        }
+        localStorage.setItem('galaxyMusicEnabled', this.musicToggle.checked);
+    }
+    
+    startMusic() {
+        if (this.useWebAudio) {
+            this.startProceduralMusic();
+        } else {
+            this.audioElement.play().catch(e => {
+                console.log('Audio play failed, using procedural music:', e);
+                this.useWebAudio = true;
+                this.startProceduralMusic();
+            });
+        }
+        this.isPlaying = true;
+    }
+    
+    stopMusic() {
+        if (this.useWebAudio) {
+            this.stopProceduralMusic();
+        } else {
+            this.audioElement.pause();
+        }
+        this.isPlaying = false;
+    }
+    
+    // Procedural space music generation using Web Audio API
+    startProceduralMusic() {
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // Resume context if suspended (browser autoplay policy)
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+        
+        // Create master gain node for volume control
+        this.gainNode = this.audioContext.createGain();
+        this.gainNode.gain.value = 0.15; // Low volume for ambient music
+        this.gainNode.connect(this.audioContext.destination);
+        
+        // Create multiple layers of ambient tones
+        this.createAmbientLayer(130.81, 0.03); // C3
+        this.createAmbientLayer(164.81, 0.02); // E3
+        this.createAmbientLayer(196.00, 0.025); // G3
+        this.createAmbientLayer(246.94, 0.015); // B3
+        
+        // Add subtle pulse/rhythm
+        this.createPulse();
+        
+        console.log('Procedural space music started');
+    }
+    
+    createAmbientLayer(frequency, volume) {
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+        const filter = this.audioContext.createBiquadFilter();
+        
+        oscillator.type = 'sine';
+        oscillator.frequency.value = frequency;
+        
+        // Add slow frequency modulation for ethereal effect
+        const lfo = this.audioContext.createOscillator();
+        const lfoGain = this.audioContext.createGain();
+        lfo.frequency.value = 0.1 + Math.random() * 0.2; // Very slow LFO
+        lfoGain.gain.value = frequency * 0.01; // Subtle modulation
+        lfo.connect(lfoGain);
+        lfoGain.connect(oscillator.frequency);
+        lfo.start();
+        
+        // Low-pass filter for warmth
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        filter.Q.value = 1;
+        
+        gainNode.gain.value = volume;
+        
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(this.gainNode);
+        
+        oscillator.start();
+        this.oscillators.push({ osc: oscillator, lfo: lfo, gain: gainNode });
+        
+        // Slow fade in
+        gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 3);
+    }
+    
+    createPulse() {
+        const pulse = () => {
+            if (!this.isPlaying || !this.audioContext) return;
+            
+            const osc = this.audioContext.createOscillator();
+            const gain = this.audioContext.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.value = 65.41; // C2 - deep bass
+            
+            gain.gain.value = 0;
+            gain.gain.setValueAtTime(0, this.audioContext.currentTime);
+            gain.gain.linearRampToValueAtTime(0.05, this.audioContext.currentTime + 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + 1);
+            
+            osc.connect(gain);
+            gain.connect(this.gainNode);
+            
+            osc.start();
+            osc.stop(this.audioContext.currentTime + 1);
+            
+            // Repeat with varying intervals
+            setTimeout(pulse, 3000 + Math.random() * 2000);
+        };
+        
+        pulse();
+    }
+    
+    stopProceduralMusic() {
+        if (this.oscillators.length > 0) {
+            // Fade out before stopping
+            if (this.gainNode) {
+                this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime);
+                this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 1);
+            }
+            
+            setTimeout(() => {
+                this.oscillators.forEach(({ osc, lfo }) => {
+                    try {
+                        osc.stop();
+                        lfo.stop();
+                    } catch (e) {
+                        // Already stopped
+                    }
+                });
+                this.oscillators = [];
+            }, 1000);
         }
     }
     
-    musicToggle.addEventListener('change', () => {
-        if (musicToggle.checked) {
-            bgMusic.play();
-        } else {
-            bgMusic.pause();
+    addVolumeControl() {
+        const volumeControl = document.createElement('div');
+        volumeControl.className = 'volume-control';
+        volumeControl.innerHTML = `
+            <input type="range" id="volumeSlider" min="0" max="100" value="30" 
+                   style="width: 80px; cursor: pointer;">
+            <span style="font-size: 12px; margin-left: 5px;">🔊</span>
+        `;
+        volumeControl.style.cssText = `
+            display: inline-flex;
+            align-items: center;
+            margin-left: 10px;
+            opacity: 0.8;
+        `;
+        
+        const container = document.querySelector('.music-toggle-container');
+        container.appendChild(volumeControl);
+        
+        const slider = document.getElementById('volumeSlider');
+        slider.addEventListener('input', (e) => {
+            const volume = e.target.value / 100;
+            if (this.useWebAudio && this.gainNode) {
+                this.gainNode.gain.value = volume * 0.3; // Max 0.3 for ambient
+            } else {
+                this.audioElement.volume = volume;
+            }
+            localStorage.setItem('galaxyMusicVolume', volume);
+        });
+        
+        // Load saved volume
+        const savedVolume = localStorage.getItem('galaxyMusicVolume');
+        if (savedVolume) {
+            slider.value = parseFloat(savedVolume) * 100;
+            if (this.audioElement) {
+                this.audioElement.volume = parseFloat(savedVolume);
+            }
         }
-        // Save music preference
-        localStorage.setItem('galaxyMusicEnabled', musicToggle.checked);
-    });
+    }
 }
+
+// Initialize music system
+const spaceMusicSystem = new SpaceMusicSystem();
 
 // ====== MOUSE TRAIL SYSTEM ======
 let mouseX = 0, mouseY = 0, trailParticles = [], lastTrailTime = 0;
