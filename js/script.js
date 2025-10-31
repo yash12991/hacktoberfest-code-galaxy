@@ -11,18 +11,308 @@ const themeButton = document.getElementById('themeButton');
 const themeDropdown = document.getElementById('themeDropdown');
 const themeOptions = document.querySelectorAll('.theme-option');
 
-// Load saved theme from localStorage or use default
-const savedTheme = localStorage.getItem('galaxy-theme') || 'deep-space';
-document.documentElement.setAttribute('data-theme', savedTheme);
-
-// Update active theme option in dropdown
-themeOptions.forEach(option => {
-    if (option.getAttribute('data-theme') === savedTheme) {
-        option.classList.add('active');
-    } else {
-        option.classList.remove('active');
+// Enhanced Theme Manager Class
+class ThemeManager {
+    constructor() {
+        this.themes = ['deep-space', 'cosmic-purple', 'emerald-dream', 'neon-sunset', 'arctic-aurora', 'solar-flare'];
+        this.currentTheme = localStorage.getItem('galaxy-theme') || 'deep-space';
+        this.themeHistory = JSON.parse(localStorage.getItem('theme-history') || '[]');
+        this.autoRotateInterval = null;
+        this.autoRotateActive = false;
+        
+        this.init();
     }
-});
+    
+    init() {
+        // Set initial theme
+        document.documentElement.setAttribute('data-theme', this.currentTheme);
+        this.updateActiveOption();
+        
+        // Setup event listeners
+        this.setupThemeSelection();
+        this.setupRandomTheme();
+        this.setupAutoRotate();
+        this.setupCustomizer();
+        this.setupKeyboardShortcuts();
+        this.setupThemePreview();
+    }
+    
+    updateActiveOption() {
+        themeOptions.forEach(option => {
+            if (option.getAttribute('data-theme') === this.currentTheme) {
+                option.classList.add('active');
+            } else {
+                option.classList.remove('active');
+            }
+        });
+    }
+    
+    setTheme(themeName, addToHistory = true) {
+        this.currentTheme = themeName;
+        document.documentElement.setAttribute('data-theme', themeName);
+        localStorage.setItem('galaxy-theme', themeName);
+        
+        if (addToHistory) {
+            this.addToHistory(themeName);
+        }
+        
+        this.updateActiveOption();
+        themeDropdown.classList.remove('show');
+        createThemeChangeEffect();
+    }
+    
+    addToHistory(themeName) {
+        // Keep last 5 themes
+        this.themeHistory = [themeName, ...this.themeHistory.filter(t => t !== themeName)].slice(0, 5);
+        localStorage.setItem('theme-history', JSON.stringify(this.themeHistory));
+    }
+    
+    setupThemeSelection() {
+        themeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const selectedTheme = option.getAttribute('data-theme');
+                this.setTheme(selectedTheme);
+            });
+        });
+    }
+    
+    setupRandomTheme() {
+        const randomBtn = document.getElementById('randomThemeBtn');
+        if (randomBtn) {
+            randomBtn.addEventListener('click', () => {
+                const availableThemes = this.themes.filter(t => t !== this.currentTheme);
+                const randomTheme = availableThemes[Math.floor(Math.random() * availableThemes.length)];
+                this.setTheme(randomTheme);
+                
+                // Visual feedback
+                randomBtn.style.transform = 'rotate(360deg)';
+                setTimeout(() => randomBtn.style.transform = 'rotate(0deg)', 500);
+            });
+        }
+    }
+    
+    setupAutoRotate() {
+        const autoRotateBtn = document.getElementById('autoRotateBtn');
+        if (autoRotateBtn) {
+            autoRotateBtn.addEventListener('click', () => {
+                this.autoRotateActive = !this.autoRotateActive;
+                
+                if (this.autoRotateActive) {
+                    autoRotateBtn.classList.add('active');
+                    this.startAutoRotate();
+                } else {
+                    autoRotateBtn.classList.remove('active');
+                    this.stopAutoRotate();
+                }
+            });
+        }
+    }
+    
+    startAutoRotate() {
+        this.autoRotateInterval = setInterval(() => {
+            const currentIndex = this.themes.indexOf(this.currentTheme);
+            const nextIndex = (currentIndex + 1) % this.themes.length;
+            this.setTheme(this.themes[nextIndex], false);
+        }, 5000); // Change theme every 5 seconds
+    }
+    
+    stopAutoRotate() {
+        if (this.autoRotateInterval) {
+            clearInterval(this.autoRotateInterval);
+            this.autoRotateInterval = null;
+        }
+    }
+    
+    setupCustomizer() {
+        const customizeBtn = document.getElementById('customizeThemeBtn');
+        const customizerModal = document.getElementById('themeCustomizerModal');
+        const closeBtn = document.getElementById('closeCustomizer');
+        const applyBtn = document.getElementById('applyCustomTheme');
+        const resetBtn = document.getElementById('resetCustomTheme');
+        
+        if (customizeBtn && customizerModal) {
+            customizeBtn.addEventListener('click', () => {
+                customizerModal.classList.add('active');
+                themeDropdown.classList.remove('show');
+            });
+            
+            closeBtn?.addEventListener('click', () => {
+                customizerModal.classList.remove('active');
+            });
+            
+            // Live preview of custom colors
+            const colorInputs = ['customPrimary', 'customSecondary', 'customAccent', 'customBg'];
+            colorInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                input?.addEventListener('input', () => this.updateCustomPreview());
+            });
+            
+            applyBtn?.addEventListener('click', () => this.applyCustomTheme());
+            resetBtn?.addEventListener('click', () => this.resetCustomTheme());
+        }
+    }
+    
+    updateCustomPreview() {
+        const primary = document.getElementById('customPrimary')?.value || '#ff7b00';
+        const secondary = document.getElementById('customSecondary')?.value || '#00ff88';
+        const accent = document.getElementById('customAccent')?.value || '#6a00ff';
+        const bg = document.getElementById('customBg')?.value || '#1a1a2e';
+        
+        const preview = document.getElementById('customizerPreview');
+        if (preview) {
+            preview.style.setProperty('--bg-gradient-start', bg);
+            preview.style.setProperty('--bg-gradient-end', this.adjustBrightness(bg, -20));
+            preview.style.setProperty('--primary-color', primary);
+            preview.style.setProperty('--secondary-color', secondary);
+            preview.style.setProperty('--primary-glow', this.hexToRGBA(primary, 0.5));
+            preview.style.setProperty('--secondary-glow', this.hexToRGBA(secondary, 0.7));
+        }
+    }
+    
+    applyCustomTheme() {
+        const primary = document.getElementById('customPrimary')?.value || '#ff7b00';
+        const secondary = document.getElementById('customSecondary')?.value || '#00ff88';
+        const accent = document.getElementById('customAccent')?.value || '#6a00ff';
+        const bg = document.getElementById('customBg')?.value || '#1a1a2e';
+        
+        const root = document.documentElement;
+        root.style.setProperty('--primary-color', primary);
+        root.style.setProperty('--primary-light', this.adjustBrightness(primary, 20));
+        root.style.setProperty('--primary-dark', this.adjustBrightness(primary, -20));
+        root.style.setProperty('--primary-glow', this.hexToRGBA(primary, 0.3));
+        
+        root.style.setProperty('--secondary-color', secondary);
+        root.style.setProperty('--secondary-dark', this.adjustBrightness(secondary, -20));
+        root.style.setProperty('--secondary-glow', this.hexToRGBA(secondary, 0.7));
+        
+        root.style.setProperty('--accent-color', accent);
+        root.style.setProperty('--accent-dark', this.adjustBrightness(accent, -20));
+        root.style.setProperty('--accent-glow', this.hexToRGBA(accent, 0.7));
+        
+        root.style.setProperty('--bg-gradient-start', bg);
+        root.style.setProperty('--bg-gradient-mid', this.adjustBrightness(bg, -10));
+        root.style.setProperty('--bg-gradient-end', this.adjustBrightness(bg, -20));
+        
+        root.style.setProperty('--container-border', primary);
+        root.style.setProperty('--container-shadow', this.hexToRGBA(primary, 0.3));
+        root.style.setProperty('--orbit-color', this.hexToRGBA(primary, 0.3));
+        
+        // Save custom theme
+        const customTheme = { primary, secondary, accent, bg };
+        localStorage.setItem('custom-theme', JSON.stringify(customTheme));
+        
+        document.getElementById('themeCustomizerModal')?.classList.remove('active');
+        createThemeChangeEffect();
+    }
+    
+    resetCustomTheme() {
+        // Reset to default values
+        document.getElementById('customPrimary').value = '#ff7b00';
+        document.getElementById('customSecondary').value = '#00ff88';
+        document.getElementById('customAccent').value = '#6a00ff';
+        document.getElementById('customBg').value = '#1a1a2e';
+        this.updateCustomPreview();
+    }
+    
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Keys 1-6 for quick theme switch
+            if (e.key >= '1' && e.key <= '6') {
+                const index = parseInt(e.key) - 1;
+                if (index < this.themes.length) {
+                    this.setTheme(this.themes[index]);
+                    this.showThemeNotification(this.themes[index]);
+                }
+            }
+            
+            // T key to toggle theme dropdown
+            if (e.key.toLowerCase() === 't' && !e.ctrlKey && !e.altKey) {
+                if (document.activeElement.tagName !== 'INPUT') {
+                    themeDropdown.classList.toggle('show');
+                }
+            }
+            
+            // R key for random theme
+            if (e.key.toLowerCase() === 'r' && e.ctrlKey) {
+                e.preventDefault();
+                document.getElementById('randomThemeBtn')?.click();
+            }
+        });
+    }
+    
+    setupThemePreview() {
+        themeOptions.forEach(option => {
+            option.addEventListener('mouseenter', () => {
+                const themeName = option.getAttribute('data-theme');
+                // Could add a preview effect here
+                option.style.transform = 'scale(1.05)';
+            });
+            
+            option.addEventListener('mouseleave', () => {
+                option.style.transform = 'scale(1)';
+            });
+        });
+    }
+    
+    showThemeNotification(themeName) {
+        const notification = document.createElement('div');
+        notification.className = 'theme-quick-notification';
+        notification.textContent = `Theme: ${this.formatThemeName(themeName)}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 27, 42, 0.95);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 14px;
+            z-index: 10001;
+            box-shadow: 0 0 20px var(--primary-glow);
+            animation: theme-notif-slide 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(-50%) translateY(-20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 2000);
+    }
+    
+    formatThemeName(name) {
+        return name.split('-').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+    }
+    
+    hexToRGBA(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+    
+    adjustBrightness(hex, percent) {
+        const num = parseInt(hex.replace('#', ''), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return '#' + (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+        ).toString(16).slice(1);
+    }
+}
+
+// Initialize Enhanced Theme Manager
+const themeManager = new ThemeManager();
 
 // Toggle dropdown visibility
 themeButton.addEventListener('click', (e) => {
@@ -35,29 +325,6 @@ document.addEventListener('click', (e) => {
     if (!themeButton.contains(e.target) && !themeDropdown.contains(e.target)) {
         themeDropdown.classList.remove('show');
     }
-});
-
-// Handle theme selection
-themeOptions.forEach(option => {
-    option.addEventListener('click', () => {
-        const selectedTheme = option.getAttribute('data-theme');
-        
-        // Update data-theme attribute
-        document.documentElement.setAttribute('data-theme', selectedTheme);
-        
-        // Save to localStorage
-        localStorage.setItem('galaxy-theme', selectedTheme);
-        
-        // Update active state in dropdown
-        themeOptions.forEach(opt => opt.classList.remove('active'));
-        option.classList.add('active');
-        
-        // Close dropdown
-        themeDropdown.classList.remove('show');
-        
-        // Optional: Create a visual effect on theme change
-        createThemeChangeEffect();
-    });
 });
 
 // Visual effect when changing themes

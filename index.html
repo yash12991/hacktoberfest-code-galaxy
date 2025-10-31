@@ -24,6 +24,20 @@
             <span>🎨 Theme</span>
         </button>
         <div class="theme-dropdown" id="themeDropdown">
+            <!-- Theme Controls -->
+            <div class="theme-controls">
+                <button class="theme-control-btn" id="randomThemeBtn" title="Random Theme">
+                    🎲
+                </button>
+                <button class="theme-control-btn" id="autoRotateBtn" title="Auto Rotate">
+                    🔄
+                </button>
+                <button class="theme-control-btn" id="customizeThemeBtn" title="Customize">
+                    ✨
+                </button>
+            </div>
+            
+            <!-- Theme Options -->
             <div class="theme-option active" data-theme="deep-space">
                 <span>Deep Space</span>
                 <div class="theme-preview">
@@ -70,6 +84,47 @@
                     <span class="theme-preview-dot" style="color: #ffaa00;"></span>
                     <span class="theme-preview-dot" style="color: #ff2f00;"></span>
                     <span class="theme-preview-dot" style="color: #ffd700;"></span>
+                </div>
+            </div>
+            
+            <!-- Keyboard Shortcuts Info -->
+            <div class="theme-shortcuts">
+                <small>💡 Press 1-6 for quick theme switch</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Customizer Modal -->
+    <div class="theme-customizer-modal" id="themeCustomizerModal">
+        <div class="customizer-content">
+            <div class="customizer-header">
+                <h3>✨ Theme Customizer</h3>
+                <button class="close-customizer" id="closeCustomizer">✕</button>
+            </div>
+            <div class="customizer-body">
+                <div class="color-picker-group">
+                    <label>Primary Color:</label>
+                    <input type="color" id="customPrimary" value="#ff7b00">
+                </div>
+                <div class="color-picker-group">
+                    <label>Secondary Color:</label>
+                    <input type="color" id="customSecondary" value="#00ff88">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent Color:</label>
+                    <input type="color" id="customAccent" value="#6a00ff">
+                </div>
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="customBg" value="#1a1a2e">
+                </div>
+                <div class="customizer-preview" id="customizerPreview">
+                    <div class="preview-star"></div>
+                    <div class="preview-text">Preview</div>
+                </div>
+                <div class="customizer-actions">
+                    <button class="apply-custom-theme" id="applyCustomTheme">Apply Theme</button>
+                    <button class="reset-custom-theme" id="resetCustomTheme">Reset</button>
                 </div>
             </div>
         </div>
